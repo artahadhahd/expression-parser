@@ -12,6 +12,8 @@ struct  {
     "", false
 };
 
+std::optional<int64_t> low_prec(Lexer& lexer);
+
 std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
     int64_t sign = 1;
     while (1)
@@ -47,21 +49,38 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
         }
         sign = is_signed.value();
     }
-    if (next.type != Token::Type::Num) {
+    // std::cout << next.lexeme() << "LEXEMEEE";
+    if (next.type != Token::Type::Num && next.type != Token::Type::LParen) {
         compiler_state.err = "Expected a number, got TOKEN#";
         compiler_state.err += std::to_string((int)next.type);
         compiler_state.has_failed = true;
 		return std::nullopt;
 	}
-    std::string_view number = next.lexeme();
-	int64_t result;
-	auto [_, errc] = std::from_chars(number.data(), number.data() + number.size(), result);
-	if (errc == std::errc::result_out_of_range) {
-        compiler_state.err = "Number '";
-        compiler_state.err += number;
-        compiler_state.err += "' is too big to compute";
-		return std::nullopt;
-	}
+    int64_t result;
+    if (next.type == Token::Type::Num) {
+        std::string_view number = next.lexeme();
+        auto [_, errc] = std::from_chars(number.data(), number.data() + number.size(), result);
+        if (errc == std::errc::result_out_of_range) {
+            compiler_state.err = "Number '";
+            compiler_state.err += number;
+            compiler_state.err += "' is too big to compute";
+            return std::nullopt;
+        }
+    } else if (next.type == Token::Type::LParen) {
+        auto factor = low_prec(lexer);
+        if (!factor) {
+            return std::nullopt;
+        }
+        result = factor.value();
+        lexer.go_back();
+        next = lexer.next();
+        if (next.type != Token::Type::RParen) {
+            compiler_state.err = "Expected a ), got ";
+            compiler_state.err += next.lexeme();
+            compiler_state.has_failed = true;
+            return std::nullopt;
+        }
+    }
 	return sign * result;
 }
 
