@@ -1,0 +1,4 @@
+This is just foundation for a future project
+
+Just an expression parser operating on int64_ts with support for unary and binary operators.
++ - * and parantheses are supported.
