@@ -12,7 +12,7 @@ bool Lexer::has() const noexcept
     return cursor < buffer_size;
 }
 
-Token Lexer::next()
+Token Lexer::next() noexcept
 {
     skip_whitespace();
     if (!has()) {
@@ -20,13 +20,19 @@ Token Lexer::next()
     }
 
     std::string lexeme;
-    char c;
+    char c = buffer[cursor];
 
-    if (cursor_is_num() != 0) {
-        while ((c = cursor_is_num()) != 0) {
+    if (c >= '1' && c <= '9') {
+        while (has() && isdigit(c)) {
             lexeme += c;
             ++cursor;
+            c = buffer[cursor];
         }
+        return Token(lexeme, Token::Type::Num, cursor, line);
+    }
+    if (c == '0') {
+        ++cursor;
+        lexeme += c;
         return Token(lexeme, Token::Type::Num, cursor, line);
     }
     if (cursor_is_identifier_starter()) {
@@ -62,8 +68,9 @@ Token Lexer::next()
     return Token("<unregistered character>", Token::Type::Unexpected, cursor, line);
 }
 
-void Lexer::go_back() {
-    --cursor;
+void Lexer::go_back() noexcept {
+    if (cursor > 0)
+        --cursor;
 }
 
 /* Private methods */
@@ -95,19 +102,7 @@ void Lexer::skip_whitespace()
     }
 }
 
-[[nodiscard]] char Lexer::cursor_is_num() const
-{
-    if (!has()) {
-        return 0;
-    }
-    const char c = buffer[cursor];
-    if (c <= '9' && c >= '1') {
-        return c;
-    }
-    return 0;
-}
-
-[[nodiscard]] bool Lexer::cursor_is_identifier_starter() const
+[[nodiscard]] bool Lexer::cursor_is_identifier_starter() const noexcept
 {
     if (!has()) {
         return 0;
@@ -115,7 +110,7 @@ void Lexer::skip_whitespace()
     return isalpha(buffer[cursor]);
 }
 
-[[nodiscard]] char Lexer::cursor_is_identifier_body() const
+[[nodiscard]] char Lexer::cursor_is_identifier_body() const noexcept
 {
     if (!has()) {
         return 0;

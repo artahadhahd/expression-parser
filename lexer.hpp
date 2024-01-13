@@ -14,12 +14,11 @@ class Lexer {
 public:
 	explicit Lexer(std::string_view input);
     bool has() const noexcept;
-    Token next();
-    void go_back();
+    Token next() noexcept;
+    void go_back() noexcept;
 private:
     void skip_whitespace();
-    [[nodiscard]] char cursor_is_num() const;
-    [[nodiscard]] bool cursor_is_identifier_starter() const;
-    [[nodiscard]] char cursor_is_identifier_body() const;
+    [[nodiscard]] bool cursor_is_identifier_starter() const noexcept;
+    [[nodiscard]] char cursor_is_identifier_body() const noexcept;
 };
 #endif

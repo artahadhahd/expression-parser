@@ -1,6 +1,7 @@
 #ifndef LCC_TOKEN_H
 #define LCC_TOKEN_H
 #include <string> // string, string_view
+#include <cstdint>
 
 
 struct Token {

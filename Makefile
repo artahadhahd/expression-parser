@@ -21,4 +21,4 @@ clean:
 	rm $(OBJECTS)
 
 release: # optimized
-	$(CC) $(INCLUDE) $(CXX_FILES) -O3  -o bin/lcc
+	$(CC) $(INCLUDE) $(CXX_FILES) -O3  -o lcc
