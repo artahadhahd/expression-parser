@@ -2,6 +2,14 @@
 #include <iomanip>
 #include <optional>
 
+#include "tree.hpp"
+
+// struct TreeNode {
+//     Token data;
+//     TreeNode* left;
+//     TreeNode* right;
+// };
+
 #include "lexer.hpp"
 using ErrorType = std::string;
 
@@ -49,7 +57,6 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
         }
         sign = is_signed.value();
     }
-    // std::cout << next.lexeme() << "LEXEMEEE";
     if (next.type != Token::Type::Num && next.type != Token::Type::LParen) {
         compiler_state.err = "Expected a number, got TOKEN#";
         compiler_state.err += std::to_string((int)next.type);
@@ -92,10 +99,13 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
     }
     int64_t num = left.value();
     auto next = lexer.next();
-    while (next.type == Token::Type::Mul || next.type == Token::Type::LParen || next.type == Token::Type::Div)
+    while (next.type == Token::Type::Mul || next.type == Token::Type::LParen || next.type == Token::Type::Div || next.type == Token::Type::Num)
     {
         std::optional<int64_t> right;
-        if (next.type == Token::Type::Mul || next.type == Token::Type::Div) {
+        if (next.type == Token::Type::Num) {
+            right = std::stoll(next.lexeme);
+        }
+        else if (next.type == Token::Type::Mul || next.type == Token::Type::Div) {
             right = parse_factor(lexer);
         } else {
             right = low_prec(lexer);
