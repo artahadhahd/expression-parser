@@ -107,22 +107,6 @@ void Lexer::skip_whitespace()
     return 0;
 }
 
-[[nodiscard]] char Lexer::cursor_is_operator() const
-{
-    if (!has()) {
-        return 0;
-    }
-    char c = 0;
-    switch ((c = buffer.at(cursor))) {
-    case '+':
-    case '/':
-    case '*':
-    case '-':
-        return c;
-    }
-    return 0;
-}
-
 [[nodiscard]] bool Lexer::cursor_is_identifier_starter() const
 {
     if (!has()) {

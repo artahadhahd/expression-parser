@@ -19,7 +19,6 @@ public:
 private:
     void skip_whitespace();
     [[nodiscard]] char cursor_is_num() const;
-    [[nodiscard]] char cursor_is_operator() const;
     [[nodiscard]] bool cursor_is_identifier_starter() const;
     [[nodiscard]] char cursor_is_identifier_body() const;
 };
