@@ -54,6 +54,9 @@ Token Lexer::next()
     case '*':
         ++cursor;
         return Token("*", Token::Type::Mul, cursor, line);
+    case '/':
+        ++cursor;
+        return Token("/", Token::Type::Div, cursor, line);
     }
 
     return Token("<unregistered character>", Token::Type::Unexpected, cursor, line);

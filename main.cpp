@@ -69,6 +69,7 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
     } else if (next.type == Token::Type::LParen) {
         auto factor = low_prec(lexer);
         if (!factor) {
+            std::cout << "my nuts";
             return std::nullopt;
         }
         result = factor.value();
@@ -90,13 +91,24 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
         return std::nullopt;
     }
     int64_t num = left.value();
-    while (lexer.next().type == Token::Type::Mul)
+    auto next = lexer.next();
+    while (next.type == Token::Type::Mul || next.type == Token::Type::LParen || next.type == Token::Type::Div)
     {
-        auto right = parse_factor(lexer);
+        std::optional<int64_t> right;
+        if (next.type == Token::Type::Mul || next.type == Token::Type::Div) {
+            right = parse_factor(lexer);
+        } else {
+            right = low_prec(lexer);
+        }
         if (!right) {
             return std::nullopt;
         }
-        num *= right.value();
+        if (next.type == Token::Type::Div) {
+            num /= right.value();
+        } else {
+            num *= right.value();
+        }
+        next = lexer.next();
     }
     lexer.go_back();
     return num;
