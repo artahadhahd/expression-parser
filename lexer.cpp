@@ -16,7 +16,7 @@ Token Lexer::next()
 {
     skip_whitespace();
     if (!has()) {
-        return Token("TOKEN_END", Token::Type::End);
+        return Token("TOKEN_END", Token::Type::End, cursor, line);
     }
 
     std::string lexeme;
@@ -27,36 +27,36 @@ Token Lexer::next()
             lexeme += c;
             ++cursor;
         }
-        return Token(lexeme, Token::Type::Num);
+        return Token(lexeme, Token::Type::Num, cursor, line);
     }
     if (cursor_is_identifier_starter()) {
         while ((c = cursor_is_identifier_body()) != 0) {
             lexeme += c;
             ++cursor;
         }
-        return Token(lexeme, Token::Type::Ident);
+        return Token(lexeme, Token::Type::Ident, cursor, line);
     }
 
     c = buffer[cursor];
     switch (c) {
     case '(':
         ++cursor;
-        return Token("(", Token::Type::LParen);
+        return Token("(", Token::Type::LParen, cursor, line);
     case ')':
         ++cursor;
-        return Token(")", Token::Type::RParen);
+        return Token(")", Token::Type::RParen, cursor, line);
     case '+':
         ++cursor;
-        return Token("+", Token::Type::Add);
+        return Token("+", Token::Type::Add, cursor, line);
     case '-':
         ++cursor;
-        return Token("-", Token::Type::Sub);
+        return Token("-", Token::Type::Sub, cursor, line);
     case '*':
         ++cursor;
-        return Token("*", Token::Type::Mul);
+        return Token("*", Token::Type::Mul, cursor, line);
     }
 
-    return Token("<unregistered character>", Token::Type::Unexpected);
+    return Token("<unregistered character>", Token::Type::Unexpected, cursor, line);
 }
 
 void Lexer::go_back() {
