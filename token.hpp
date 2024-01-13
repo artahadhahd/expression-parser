@@ -3,8 +3,7 @@
 #include <string> // string, string_view
 
 
-class Token {
-public:
+struct Token {
     std::string lexeme;
     size_t line, cursor;
 	enum class Type : uint8_t {
