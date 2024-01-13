@@ -4,9 +4,9 @@
 
 
 class Token {
-    std::string _lexeme;
-    size_t row, column;
 public:
+    std::string lexeme;
+    size_t line, cursor;
 	enum class Type : uint8_t {
 		Unexpected,
 		End,
@@ -20,22 +20,10 @@ public:
 		Ident,
 	} type;
 
-	explicit Token(const std::string lexeme, const Type type, size_t x, size_t y) : _lexeme(lexeme) {
+	explicit Token(const std::string lexeme_, const Type type, size_t x, size_t y) : lexeme(lexeme_) {
         this->type = type;
-        column = x;
-        row = y;
-    }
-
-    std::string_view lexeme() const noexcept {
-		return _lexeme;
-	}
-
-    size_t line() const {
-        return row;
-    }
-
-    size_t cursor() const {
-        return column;
+        cursor = x;
+        line = y;
     }
 };
 #endif

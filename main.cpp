@@ -43,7 +43,7 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
     if (next.type == Token::Type::Add || next.type == Token::Type::Sub) {
         auto is_signed = check_for_sign(lexer, next);
         if (!is_signed) {
-            compiler_state.err = next.lexeme();
+            compiler_state.err = next.lexeme;
             compiler_state.err +=  ": not a valid unary operator";
             return std::nullopt;
         }
@@ -58,7 +58,7 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
 	}
     int64_t result;
     if (next.type == Token::Type::Num) {
-        std::string_view number = next.lexeme();
+        std::string_view number = next.lexeme;
         auto [_, errc] = std::from_chars(number.data(), number.data() + number.size(), result);
         if (errc == std::errc::result_out_of_range) {
             compiler_state.err = "Number '";
@@ -76,7 +76,7 @@ std::optional<int64_t> check_for_sign(Lexer& lexer, Token& after) {
         next = lexer.next();
         if (next.type != Token::Type::RParen) {
             compiler_state.err = "Expected a ), got ";
-            compiler_state.err += next.lexeme();
+            compiler_state.err += next.lexeme;
             compiler_state.has_failed = true;
             return std::nullopt;
         }
